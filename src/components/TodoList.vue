@@ -1,6 +1,6 @@
 <template>
   <div>
-    <ul>
+    <transition-group name="list" tag="ul">
       <li v-for="(todoItem, index) in propsdata" v-bind:key="todoItem.item" class="shadow">
         <i class="far fa-check-circle checkBtn"
            v-bind:class="{checkBtnCompleted: todoItem.completed}"
@@ -11,7 +11,7 @@
           <i class="far fa-trash-alt"></i>
         </span>
       </li>
-    </ul>
+    </transition-group>
   </div>
 </template>
 
@@ -21,14 +21,11 @@ export default {
   name: "TodoList",
   methods: {
     removeTodo(todoItem, index) {
-      localStorage.removeItem(todoItem);
-      this.todoItems.splice(index, 1);
+      this.$emit('removeItem', todoItem, index);
     },
     // eslint-disable-next-line no-unused-vars
     toggleComplete(t, i) {
-      t.completed = !t.completed;
-      localStorage.removeItem(t.item);
-      localStorage.setItem(t.item, JSON.stringify(t));
+      this.$emit('toggleItem', t, i);
     }
   }
 }
@@ -73,4 +70,13 @@ li {
   color: #de4343;
 }
 
+.list-enter-active, .list-leave-active {
+  transition: all 0.3s;
+}
+
+.list-enter, .list-leave-to /* .list-leave-active below version 2.1.8 */
+{
+  opacity: 0;
+  transform: translateY(30px);
+}
 </style>

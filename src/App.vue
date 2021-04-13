@@ -2,8 +2,10 @@
   <div id="app">
     <TodoHeader></TodoHeader>
     <TodoInput v-on:addTodoItem="addSingleItem"></TodoInput>
-    <TodoList v-bind:propsdata="todoItems"></TodoList>
-    <TodoFooter></TodoFooter>
+    <TodoList v-bind:propsdata="todoItems"
+              v-on:removeItem="removeSingleItem"
+              v-on:toggleItem="toggleSingleItem"></TodoList>
+    <TodoFooter v-on:clearAll="clearAllItems"></TodoFooter>
   </div>
 </template>
 
@@ -14,16 +16,36 @@ import TodoList from './components/TodoList.vue'
 import TodoFooter from './components/TodoFooter.vue'
 
 export default {
-  data: function (){
+  components: {
+    TodoHeader,
+    TodoInput,
+    TodoList,
+    TodoFooter
+  },
+  data() {
     return {
-      todoItems : []
+      todoItems: []
     }
   },
-  methods:{
-    addSingleItem(todoItem){
-      let obj = {completed: false, item: todoItem};
+  methods: {
+    addSingleItem(todoItem) {
+      const obj = {completed: false, item: todoItem};
       localStorage.setItem(todoItem, JSON.stringify(obj));
       this.todoItems.push(obj);
+    },
+    removeSingleItem(todoItem, index) {
+      localStorage.removeItem(todoItem.item);
+      this.todoItems.splice(index, 1);
+    },
+    // eslint-disable-next-line no-unused-vars
+    toggleSingleItem(t, i) {
+      this.todoItems[i].completed = !this.todoItems[i].completed;
+      localStorage.removeItem(t.item);
+      localStorage.setItem(t.item, JSON.stringify(t));
+    },
+    clearAllItems(){
+      localStorage.clear();
+      this.todoItems = [];
     }
   },
   created() {
@@ -34,15 +56,7 @@ export default {
         }
       }
     }
-  },
-
-  components: {
-    'TodoHeader': TodoHeader,
-    'TodoInput': TodoInput,
-    'TodoList': TodoList,
-    'TodoFooter': TodoFooter
   }
-
 }
 </script>
 
