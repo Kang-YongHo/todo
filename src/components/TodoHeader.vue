@@ -1,13 +1,18 @@
 <template>
   <!-- html -->
   <header>
-    <h1>{{ this.$store.state.headerText }}</h1>
+    <h1>{{ this.headerText }}</h1>
   </header>
 </template>
 
 <script>
+import {mapGetters} from "vuex";
+
 export default {
-  name: "TodoHeader"
+  name: "TodoHeader",
+  computed:{
+    ...mapGetters({headerText : 'headerText'})
+  }
   // js script
 }
 </script>
